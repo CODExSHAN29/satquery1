@@ -1,0 +1,111 @@
+# Byte-compiled / optimized / test / build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+.cache/
+*.egg
+*.whl
+
+# Virtual environments
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.token
+
+# Editor & Tooling settings
+.claude/
+.agents/
+.omniroute/
+.geochat_repo/
+*.local.json
+*.db
+_smoke_test.py
+test_hf_vlm.py
+test_grounding.py
+AUDIT_REPORT_COMPLETE.md
+audit_report.md
+audit_scientific_gap.md
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ML Models & Weights (large binary files)
+*.pth
+*.pt
+*.bin
+*.safetensors
+*.onnx
+*.h5
+*.tflite
+*.ckpt
+/models/
+
+# Datasets & Archive files
+*.zip
+*.tar.gz
+*.tar
+*.gz
+*.bz2
+*.7z
+datasets/raw/**/*.tif
+datasets/raw/**/*.tiff
+datasets/raw/**/*.png
+datasets/raw/**/*.jpg
+datasets/raw/**/*.h5
+datasets/raw/**/*.nc
+datasets/raw/**/*.npz
+datasets/raw/**/*.npy
+
+# Vector DB & Embeddings
+chroma_db/
+vector_db/
+
+# Outputs, User Uploads & Logs
+outputs/
+logs/
+uploads/
+temp_uploads/
+*.log
+*.tmp
+*.temp
+code_quality_audit_results.txt
+
+# Generated reports
+*.pdf
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/config.toml

@@ -1,0 +1,13 @@
+[
+  {
+    "patch_id": "S2A_MSIL2A_20170613T101031_0_45",
+    "optical_path": "C:\\Users\\codex\\newsat\\datasets\\raw\\bigearthnet\\sample_optical.tif",
+    "sar_path": "C:\\Users\\codex\\newsat\\datasets\\raw\\bigearthnet\\sample_sar.tif",
+    "land_cover": [
+      "Coniferous forest",
+      "Mixed forest",
+      "Water bodies"
+    ],
+    "caption": "Co-registered Sentinel-1 SAR and Sentinel-2 optical imagery showing forest and water body boundary."
+  }
+]
