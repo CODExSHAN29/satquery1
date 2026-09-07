@@ -1,0 +1,10 @@
+[
+  {
+    "pair_id": "CDVQA_001",
+    "t1_image": "C:\\Users\\codex\\newsat\\datasets\\raw\\cdvqa\\t1_sample.tif",
+    "t2_image": "C:\\Users\\codex\\newsat\\datasets\\raw\\cdvqa\\t2_sample.tif",
+    "question": "What changed between these two dates, and where did the change occur?",
+    "answer": "Between T1 and T2, agricultural land was converted into built-up structures in the eastern quadrant.",
+    "change_percentage": 14.2
+  }
+]

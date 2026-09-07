@@ -1,0 +1,67 @@
+{
+  "run_timestamp": "2026-09-06T00:00:00",
+  "geochat_caption": {
+    "status": "FAIL",
+    "model": "microsoft/Phi-3.5-vision-instruct (placeholder, NOT official GeoChat)",
+    "reason": "AutoModelForVision2Seq missing in transformers 5.16.1; model load false",
+    "processing_time_ms": 0,
+    "raw_output": null,
+    "grounding_available": false,
+    "bounding_boxes": [],
+    "confidence": null
+  },
+  "geochat_vqa": {
+    "status": "FAIL",
+    "model": "microsoft/Phi-3.5-vision-instruct",
+    "reason": "same load failure",
+    "processing_time_ms": 0
+  },
+  "geochat_grounding": {
+    "status": "FAIL",
+    "reason": "no model output -> zero boxes truthfully",
+    "boxes": [],
+    "confidence": null
+  },
+  "bi_temporal_identical": {
+    "status": "PASS",
+    "changed_percent": 0.0,
+    "change_detected": false,
+    "regions": 0,
+    "processing_time_ms": 120
+  },
+  "bi_temporal_real_pair": {
+    "status": "PASS",
+    "changed_percent": 61.78,
+    "regions": 11,
+    "processing_time_ms": 210
+  },
+  "bi_temporal_where": {
+    "status": "PASS",
+    "answer_contains": "western",
+    "processing_time_ms": 95
+  },
+  "bi_temporal_how_much": {
+    "status": "PASS",
+    "answer_contains": "61.78%",
+    "processing_time_ms": 88
+  },
+  "sar_optical_fusion_3pairs": {
+    "status": "PASS",
+    "checkpoint_loaded": true,
+    "adapter_params": 166675,
+    "results": [
+      {"pair": "S1+S2", "top_class": "class_5", "probability": 0.5456},
+      {"pair": "S1+S1", "top_class": "class_5", "probability": 0.5331},
+      {"pair": "S2+S1", "top_class": "class_0", "probability": 0.5317}
+    ],
+    "processing_time_ms_avg": 13
+  },
+  "routing_s1_s2": {
+    "status": "PASS",
+    "specialist": "fusion_adapter",
+    "reason": "filename s1/s2 detected by is_multimodal_sar_optical"
+  },
+  "execution_trace_persisted": false,
+  "database_schema_present": false,
+  "ui_trace_panel": false
+}

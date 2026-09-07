@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "satquery-ai"
+version = "1.0.0"
+description = "Agentic Vision-Language AI Assistant for Remote Sensing Imagery"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+keywords = ["satellite", "remote-sensing", "vlm", "isro"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "streamlit>=1.30.0",
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.7.0",
+    "torch>=2.2.0",
+    "torchvision>=0.17.0",
+    "transformers>=4.44.0",
+    "peft>=0.11.0",
+    "accelerate>=0.33.0",
+    "bitsandbytes>=0.43.0",
+    "datasets>=2.20.0",
+    "tifffile>=2024.5.10",
+    "numpy>=1.26.0",
+    "opencv-python-headless>=4.9.0",
+    "Pillow>=10.3.0",
+    "rasterio>=1.3.0",
+    "shapely>=2.0.0",
+    "sentence-transformers>=3.2.0",
+    "chromadb>=0.5.0",
+    "reportlab>=4.2.0",
+    "requests>=2.32.0",
+    "tqdm>=4.66.0",
+    "python-dotenv>=1.0.0",
+    "tenacity>=8.2.0",
+    "slowapi>=0.1.9",
+    "gradio_client>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "black>=24.0", "mypy>=1.10"]
+
+[tool.pytest.ini_options]
+testpaths = ["satquery_ai/tests"]
+python_files = ["test_*.py"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["satquery_ai*"]
+exclude = ["tests*", "datasets*)"]

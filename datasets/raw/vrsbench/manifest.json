@@ -1,0 +1,17 @@
+[
+  {
+    "image_id": "VRS_001",
+    "image_path": "C:\\Users\\codex\\newsat\\datasets\\raw\\vrsbench\\sample_vrs.tif",
+    "question": "Describe the land-cover and major objects visible in this image.",
+    "answer": "The patch depicts an urban area intersected by a highway and river.",
+    "grounding": {
+      "query": "river",
+      "box_2d": [
+        100,
+        150,
+        400,
+        480
+      ]
+    }
+  }
+]
