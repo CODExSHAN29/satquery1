@@ -10,6 +10,10 @@ An ISRO-compliant, agentic vision-language AI system for remote sensing and GeoT
 - **GeoTIFF Parsing**: Multi-band Sentinel-2 / Landsat-9 / ISRO Cartosat-3 support via `rasterio`
 - **Execution Trace**: ISRO-compliant auditable JSON trace with confidence scores
 - **PDF Reporting**: Downloadable execution report for ISRO submission
+## DEMO
+
+Live demo :- https://satmax.streamlit.app/
+
 
 ## Quick Start
 
