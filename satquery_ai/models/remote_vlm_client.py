@@ -18,6 +18,12 @@ import os
 import time
 from typing import Any, Dict, Optional
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from gradio_client import Client, handle_file
 
 logger = logging.getLogger("satquery_ai.remote_vlm")
@@ -189,10 +195,23 @@ class RemoteVLMClient:
 
             message = str(exc).strip() or "Unknown remote inference error"
 
-            if "ZeroGPU runs limit" in message:
+            # Enhanced diagnostic for ZeroGPU quota/auth failures
+            if "ZeroGPU runs limit" in message or "quota" in message.lower():
+                auth_hint = ""
+                if not self._hf_token:
+                    auth_hint = (
+                        " No HF_TOKEN configured. Set HF_TOKEN in your environment or "
+                        "Streamlit secrets (must have 'Write' scope) before launching."
+                    )
+                else:
+                    auth_hint = (
+                        " HF_TOKEN is set but may be expired or invalid. "
+                        "Generate a new token at https://huggingface.co/settings/tokens (Write scope)."
+                    )
                 message = (
-                    "Hugging Face ZeroGPU quota rejected the request. "
-                    "Ensure HF_TOKEN is set before launching Streamlit. "
+                    "[VLM UNAVAILABLE] Hugging Face ZeroGPU rejected the request."
+                    f"{auth_hint} Space: {self.space}. Quota info: free tier gives ~5 min/day. "
+                    f"Current usage: check https://huggingface.co/spaces/{self.space}. "
                     f"Original error: {message}"
                 )
 

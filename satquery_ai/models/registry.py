@@ -10,14 +10,6 @@ MODEL_REGISTRY: Dict[str, Any] = {
         "fine_tuned": True,
         "adapter": "BigEarthNet LoRA",
     },
-    "geochat": {
-        "name": "GeoChat (Remote VLM Alias)",
-        "task": "single_image_vqa",
-        "pretrained": True,
-        "trained_by_us": False,
-        "fine_tuned": True,
-        "adapter": "BigEarthNet LoRA",
-    },
     "changechat": {
         "name": "ChangeChat",
         "task": "bi_temporal_change",

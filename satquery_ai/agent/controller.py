@@ -21,7 +21,7 @@ class AgentController:
       Natural-language query → QueryRouter.classify() → Specialist → Evidence Fusion → Response
 
     Specialists:
-      - GeoChat (RemoteSensingVLM): Single-image VQA, captioning, grounding
+      - Remote VLM (Qwen2-VL-2B-Instruct + BigEarthNet LoRA): Single-image VQA, captioning, grounding
       - ChangeChat: Bi-temporal change detection + VQA
       - Fusion Adapter: SAR + Optical cross-modal analysis
 
@@ -111,6 +111,10 @@ class AgentController:
             specialist_error = fused.model_trace.get("error") if isinstance(fused.model_trace, dict) else None
             is_success = specialist_error is None
 
+            overlay_image_path = fused.model_trace.get("overlay_image_path") if isinstance(fused.model_trace, dict) else None
+            change_map_path = fused.model_trace.get("change_map_path") if isinstance(fused.model_trace, dict) else None
+            predicted_classes = fused.model_trace.get("predicted_classes") if isinstance(fused.model_trace, dict) else []
+
             result: Dict[str, Any] = {
                 "success": is_success,
                 "task": fused.sub_task.upper(),
@@ -125,6 +129,9 @@ class AgentController:
                 "trace_summary": trace.to_summary(),
                 "architecture": "new_query_router",
                 "remote_vlm_metadata": fused.remote_vlm_metadata,
+                "overlay_image_path": overlay_image_path,
+                "change_map_path": change_map_path,
+                "predicted_classes": predicted_classes,
             }
             return result
 

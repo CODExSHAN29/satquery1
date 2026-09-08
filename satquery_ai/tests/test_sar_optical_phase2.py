@@ -352,14 +352,14 @@ class TestSpecialistExecutesOnce(unittest.TestCase):
         from unittest.mock import patch, MagicMock
 
         router = QueryRouter()
-        with patch.object(router, "_execute_geochat") as mock_geo, \
+        with patch.object(router, "_execute_remote_vlm") as mock_vlm, \
              patch.object(router, "_execute_changechat") as mock_change, \
              patch.object(router, "_execute_fusion_adapter") as mock_fusion:
             # Route a fusion query
             router.route("sar optical fusion", ["s1.tif", "s2.tif"])
 
             call_count = sum([
-                mock_geo.call_count,
+                mock_vlm.call_count,
                 mock_change.call_count,
                 mock_fusion.call_count,
             ])
