@@ -555,9 +555,19 @@ def render_debug_details(results: Dict[str, Any]) -> None:
         st.json(results)
 
 
+@st.cache_resource(show_spinner=False)
+def get_controller() -> Optional[Any]:
+    if not ENGINE_AVAILABLE:
+        return None
+    try:
+        return AgentController()
+    except Exception:
+        return None
+
+
 def execute_satquery(
     query: str,
-    primary_path: str,
+    primary_path: Optional[str],
     secondary_path: Optional[str],
     mode: str,
 ) -> Dict[str, Any]:
@@ -569,11 +579,17 @@ def execute_satquery(
             ).strip()
         }
 
+    if not primary_path:
+        return {"error": "Primary satellite image is required."}
+
     image_paths = [primary_path]
     if secondary_path:
         image_paths.append(secondary_path)
 
-    controller = AgentController()
+    controller = get_controller()
+    if controller is None:
+        controller = AgentController()
+
     process_fn = (
         getattr(controller, "process_query", None)
         or getattr(controller, "execute_query", None)

@@ -250,5 +250,59 @@ class TestAgentControllerAndRouterIntegration(unittest.TestCase):
         self.assertIn("sar_optical_fusion", registry)
 
 
+class TestRemoteVLMCachingAndOptimization(unittest.TestCase):
+    def test_optimize_image_payload_resizes_oversized(self):
+        import numpy as np, tempfile, os
+        from PIL import Image
+
+        # Create large test image (2048 x 2048)
+        large_arr = np.random.randint(0, 255, (2048, 2048, 3), dtype=np.uint8)
+        with tempfile.TemporaryDirectory() as td:
+            src_path = os.path.join(td, "large.png")
+            Image.fromarray(large_arr).save(src_path)
+
+            opt_path, cleanup_path = RemoteVLMClient._optimize_image_payload(src_path, max_dim=1024)
+            self.assertIsNotNone(cleanup_path)
+            self.assertTrue(os.path.exists(opt_path))
+
+            with Image.open(opt_path) as im:
+                w, h = im.size
+                self.assertLessEqual(max(w, h), 1024)
+
+            if cleanup_path and os.path.exists(cleanup_path):
+                os.remove(cleanup_path)
+
+    def test_in_memory_lru_caching(self):
+        import numpy as np, tempfile, os
+        from PIL import Image
+
+        arr = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
+        with tempfile.TemporaryDirectory() as td:
+            src_path = os.path.join(td, "cached_test.png")
+            Image.fromarray(arr).save(src_path)
+
+            client = RemoteVLMClient()
+            mock_result = {
+                "success": True,
+                "answer": "Cached answer.",
+                "confidence": 0.95,
+                "confidence_percent": 95.0,
+                "task": "vqa",
+                "execution_time_ms": 500.0,
+            }
+
+            with patch.object(client, "_predict_raw", return_value=mock_result) as mock_raw:
+                # First call should invoke _predict_raw
+                res1 = client.vqa(src_path, "Describe scene.")
+                self.assertEqual(mock_raw.call_count, 1)
+                self.assertEqual(res1["answer"], "Cached answer.")
+
+                # Second identical call should hit cache without calling _predict_raw again
+                res2 = client.vqa(src_path, "Describe scene.")
+                self.assertEqual(mock_raw.call_count, 1)
+                self.assertEqual(res2["answer"], "Cached answer.")
+                self.assertTrue(res2["metadata"].get("cached", False))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
