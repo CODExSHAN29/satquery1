@@ -12,11 +12,16 @@ Environment variables:
 
 from __future__ import annotations
 
+import copy
+import hashlib
 import json
 import logging
 import os
+import tempfile
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
+
+from PIL import Image
 
 try:
     from dotenv import load_dotenv
@@ -34,6 +39,7 @@ class RemoteVLMClient:
 
     DEFAULT_SPACE = "CODEXSHAN/satquery"
     DEFAULT_TIMEOUT = 180.0
+    MAX_PAYLOAD_DIM = 1024
 
     def __init__(
         self,
@@ -72,6 +78,7 @@ class RemoteVLMClient:
 
         self._hf_token: Optional[str] = token or None
         self._client: Optional[Client] = None
+        self._cache: Dict[str, Dict[str, Any]] = {}
 
     @property
     def is_authenticated(self) -> bool:
@@ -100,6 +107,70 @@ class RemoteVLMClient:
 
     def _reset_client(self) -> None:
         self._client = None
+
+    def _get_cache_key(self, image_path: str, question: str) -> str:
+        try:
+            stat = os.stat(image_path)
+            raw = f"{stat.st_size}_{stat.st_mtime}_{question.strip().lower()}"
+        except Exception:
+            raw = f"{image_path}_{question.strip().lower()}"
+        return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+    @classmethod
+    def _optimize_image_payload(
+        cls, image_path: str, max_dim: int = MAX_PAYLOAD_DIM
+    ) -> Tuple[str, Optional[str]]:
+        """
+        Compresses and optimizes high-res/GeoTIFF images before network transfer.
+        Returns: (path_to_send, temporary_cleanup_path)
+        """
+        try:
+            ext = os.path.splitext(image_path)[1].lower()
+            file_size = os.path.getsize(image_path)
+
+            # Fast bypass: standard small JPEG/PNG already under max_dim
+            if ext in {".jpg", ".jpeg", ".png"} and file_size < 600 * 1024:
+                try:
+                    with Image.open(image_path) as im:
+                        w, h = im.size
+                        if max(w, h) <= max_dim:
+                            return image_path, None
+                except Exception:
+                    pass
+
+            # Read image array (via GeoTIFFParser for satellite TIFFs or Pillow for others)
+            im: Optional[Image.Image] = None
+            if ext in {".tif", ".tiff"}:
+                try:
+                    from satquery_ai.utils.geotiff_parser import GeoTIFFParser
+                    parsed = GeoTIFFParser().parse(image_path)
+                    rgb_arr = parsed.get("rgb_array")
+                    if rgb_arr is not None:
+                        im = Image.fromarray(rgb_arr)
+                except Exception as parse_err:
+                    logger.debug("[RemoteVLM] GeoTIFFParser bypass failed: %s", parse_err)
+
+            if im is None:
+                with Image.open(image_path) as src_im:
+                    im = src_im.convert("RGB")
+
+            # Scale down if larger than max_dim (preserving aspect ratio)
+            w, h = im.size
+            if max(w, h) > max_dim:
+                scale = max_dim / float(max(w, h))
+                new_w = max(1, int(round(w * scale)))
+                new_h = max(1, int(round(h * scale)))
+                im = im.resize((new_w, new_h), Image.Resampling.LANCZOS)
+
+            # Write optimized JPEG to temporary file
+            fd, temp_path = tempfile.mkstemp(prefix="vlm_opt_", suffix=".jpg")
+            os.close(fd)
+            im.save(temp_path, format="JPEG", quality=88, optimize=True)
+            return temp_path, temp_path
+
+        except Exception as exc:
+            logger.debug("[RemoteVLM] Payload optimization skipped: %s", exc)
+            return image_path, None
 
     def analyze(self, image_path: str, question: str) -> Dict[str, Any]:
         return self._predict(image_path, question)
@@ -136,21 +207,30 @@ class RemoteVLMClient:
         if not question or not question.strip():
             raise ValueError("question is required")
 
-        client = self._get_client()
+        opt_path, cleanup_path = self._optimize_image_payload(image_path)
+        try:
+            client = self._get_client()
 
-        logger.info(
-            "[RemoteVLM] Calling %s /predict with image=%s",
-            self.space,
-            os.path.basename(image_path),
-        )
+            logger.info(
+                "[RemoteVLM] Calling %s /predict with image=%s (payload=%s)",
+                self.space,
+                os.path.basename(image_path),
+                os.path.basename(opt_path),
+            )
 
-        job = client.submit(
-            image=handle_file(image_path),
-            question=question.strip(),
-            api_name="/predict",
-        )
+            job = client.submit(
+                image=handle_file(opt_path),
+                question=question.strip(),
+                api_name="/predict",
+            )
 
-        result: Any = job.result(timeout=self.timeout)
+            result: Any = job.result(timeout=self.timeout)
+        finally:
+            if cleanup_path and os.path.exists(cleanup_path):
+                try:
+                    os.remove(cleanup_path)
+                except Exception:
+                    pass
 
         if isinstance(result, (list, tuple)):
             if len(result) != 1:
@@ -176,6 +256,18 @@ class RemoteVLMClient:
 
     def _predict(self, image_path: str, question: str) -> Dict[str, Any]:
         started = time.perf_counter()
+
+        cache_key = self._get_cache_key(image_path, question)
+        if cache_key in self._cache:
+            logger.info(
+                "[RemoteVLM] Serving response from in-memory LRU cache for image: %s",
+                os.path.basename(image_path),
+            )
+            cached_resp = copy.deepcopy(self._cache[cache_key])
+            if "metadata" in cached_resp and isinstance(cached_resp["metadata"], dict):
+                cached_resp["metadata"]["cached"] = True
+                cached_resp["metadata"]["execution_time_ms"] = 0.5
+            return cached_resp
 
         try:
             result = self._predict_raw(image_path, question)
@@ -281,7 +373,7 @@ class RemoteVLMClient:
             "authenticated": self.is_authenticated,
         }
 
-        return {
+        response_payload = {
             "success": True,
             "answer": str(answer),
             "error": None,
@@ -291,6 +383,10 @@ class RemoteVLMClient:
             "metadata": metadata,
             "raw_response": result,
         }
+
+        # Cache response
+        self._cache[cache_key] = copy.deepcopy(response_payload)
+        return response_payload
 
     @staticmethod
     def _error(

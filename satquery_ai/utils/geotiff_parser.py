@@ -113,7 +113,7 @@ class GeoTIFFParser:
                 h, w = src.height, src.width
                 crs = str(src.crs) if src.crs else "EPSG:4326"
                 transform = src.transform
-                modality = _detect_modality(target_path)
+                modality = "sar" if count >= 4 else "optical"
 
                 # Read up to 3 channels for RGB display
                 if count >= 3:
