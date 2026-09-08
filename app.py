@@ -295,7 +295,7 @@ def preview_uploaded_image(uploaded_file, caption: str) -> None:
     try:
         uploaded_file.seek(0)
         image = Image.open(uploaded_file)
-        st.image(image, caption=caption, use_container_width=True)
+        st.image(image, caption=caption, width="stretch")
         st.caption(
             f"{uploaded_file.name} · "
             f"{image.width}×{image.height} · "
@@ -406,7 +406,7 @@ def render_spatial_evidence(results: Dict[str, Any]) -> None:
         )
 
     if rows:
-        st.dataframe(rows, use_container_width=True, hide_index=True)
+        st.dataframe(rows, width="stretch", hide_index=True)
 
 
 def render_visual_evidence(
@@ -442,7 +442,7 @@ def render_visual_evidence(
                 else "Optical / Primary"
             )
             try:
-                st.image(primary_path, use_container_width=True)
+                st.image(primary_path, width="stretch")
             except Exception:
                 st.info("Primary image preview unavailable.")
 
@@ -453,17 +453,17 @@ def render_visual_evidence(
                 else "SAR / Secondary"
             )
             try:
-                st.image(secondary_path, use_container_width=True)
+                st.image(secondary_path, width="stretch")
             except Exception:
                 st.info("Secondary image preview unavailable.")
 
     if change_map and os.path.exists(str(change_map)):
         st.caption("Detected change evidence")
-        st.image(str(change_map), use_container_width=True)
+        st.image(str(change_map), width="stretch")
 
     if overlay_path and os.path.exists(str(overlay_path)):
         st.caption("Generated spatial overlay")
-        st.image(str(overlay_path), use_container_width=True)
+        st.image(str(overlay_path), width="stretch")
 
 
 def render_execution_summary(results: Dict[str, Any]) -> None:
@@ -715,7 +715,7 @@ if mode == "Single Image":
                 st.button(
                     prompt,
                     key=f"single_prompt_{index}",
-                    use_container_width=True,
+                    width="stretch",
                     on_click=set_prompt,
                     args=(prompt,),
                 )
@@ -729,7 +729,7 @@ if mode == "Single Image":
         submit_btn = st.button(
             "Analyze Image",
             type="primary",
-            use_container_width=True,
+            width="stretch",
         )
 
     secondary_file = None
@@ -762,7 +762,7 @@ elif mode == "Change Detection":
             st.button(
                 prompt,
                 key=f"change_prompt_{index}",
-                use_container_width=True,
+                width="stretch",
                 on_click=set_prompt,
                 args=(prompt,),
             )
@@ -776,7 +776,7 @@ elif mode == "Change Detection":
     submit_btn = st.button(
         "Analyze Changes",
         type="primary",
-        use_container_width=True,
+        width="stretch",
     )
 
 else:
@@ -807,7 +807,7 @@ else:
             st.button(
                 prompt,
                 key=f"fusion_prompt_{index}",
-                use_container_width=True,
+                width="stretch",
                 on_click=set_prompt,
                 args=(prompt,),
             )
@@ -821,7 +821,7 @@ else:
     submit_btn = st.button(
         "Run Fusion Analysis",
         type="primary",
-        use_container_width=True,
+        width="stretch",
     )
 
 
@@ -1056,7 +1056,7 @@ if isinstance(results, dict):
                         data=pdf_file.read(),
                         file_name="SatQuery_AI_Report.pdf",
                         mime="application/pdf",
-                        use_container_width=True,
+                        width="stretch",
                     )
             except Exception as pdf_error:
                 st.caption(
