@@ -31,8 +31,12 @@ venv.bak/
 
 # Editor & Tooling settings
 .claude/
+.claude*/
 .agents/
 .omniroute/
+.omniroute*/
+.cursor/
+.windsurf/
 .geochat_repo/
 *.local.json
 *.db

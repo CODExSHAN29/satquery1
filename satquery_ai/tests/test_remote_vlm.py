@@ -188,6 +188,57 @@ class TestAgentControllerAndRouterIntegration(unittest.TestCase):
         self.assertFalse(res["success"])
         self.assertIn("No image paths provided", res["error"])
 
+    def test_controller_bitemporal_change_execution(self):
+        from satquery_ai.agent.controller import AgentController
+        import numpy as np, tempfile, os
+        from PIL import Image
+
+        # Create two synthetic test images (before/after)
+        img_a = np.random.randint(0, 100, (256, 256, 3), dtype=np.uint8)
+        img_b = img_a.copy()
+        img_b[64:192, 64:192] = 200  # introduce a visible change patch
+
+        with tempfile.TemporaryDirectory() as td:
+            p1 = os.path.join(td, "before.tif")
+            p2 = os.path.join(td, "after.tif")
+            Image.fromarray(img_a).save(p1)
+            Image.fromarray(img_b).save(p2)
+
+            controller = AgentController()
+            res = controller.execute_query_new(
+                "What changed between these images?",
+                [p1, p2],
+            )
+            self.assertTrue(res["success"], f"Controller failed: {res.get('error')}")
+            self.assertIn("CHANGE_VQA", res["task"])
+            self.assertIsInstance(res["spatial_evidence"], list)
+            self.assertIn("overlay_image_path", res)
+
+    def test_controller_sar_optical_fusion_execution(self):
+        from satquery_ai.agent.controller import AgentController
+        import numpy as np, tempfile, os
+        from PIL import Image
+
+        # Create synthetic optical and SAR images
+        optical = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
+        sar = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
+
+        with tempfile.TemporaryDirectory() as td:
+            p_opt = os.path.join(td, "optical.tif")
+            p_sar = os.path.join(td, "sar_s1.tif")
+            Image.fromarray(optical).save(p_opt)
+            Image.fromarray(sar).save(p_sar)
+
+            controller = AgentController()
+            res = controller.execute_query_new(
+                "Fuse SAR and optical imagery for urban analysis",
+                [p_opt, p_sar],
+            )
+            self.assertTrue(res["success"], f"Controller failed: {res.get('error')}")
+            self.assertIn("JOINT_REASONING", res["task"])
+            self.assertIsInstance(res["spatial_evidence"], list)
+            self.assertIn("overlay_image_path", res)
+
     def test_model_registry_remote_vlm_canonical(self):
         from satquery_ai.models.registry import get_registry
 

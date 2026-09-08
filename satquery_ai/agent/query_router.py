@@ -2,7 +2,7 @@
 Query Router for SatQuery AI (New Architecture).
 
 Routes natural-language queries to the correct specialist model:
-  - GeoChat      → Single-image VQA, captioning, text-guided grounding
+  - Remote VLM   → Single-image VQA, captioning, text-guided grounding (Qwen2-VL + BigEarthNet LoRA)
   - ChangeChat   → Bi-temporal change detection + change VQA
   - Fusion Adapter → SAR + Optical cross-modal joint analysis
 
@@ -62,12 +62,12 @@ class QueryRouter:
     ┌──────┼──────────────────┐
     │      │                  │
     ▼      ▼                  ▼
-  GeoChat  ChangeChat      Fusion Adapter
-  (single  (bi-temporal    (SAR + Optical
-   image)   change)         fusion)
-    │      │                  │
-    ▼      ▼                  ▼
-  Evidence Fusion layer merges into unified FusedResponse
+  Remote  ChangeChat      Fusion Adapter
+   VLM    (bi-temporal    (SAR + Optical
+ (single   change)         fusion)
+  image)   │                  │
+    │      ▼                  ▼
+    ▼    Evidence Fusion layer merges into unified FusedResponse
     │
     ▼
   answer + spatial evidence + confidence + model trace
@@ -105,7 +105,7 @@ class QueryRouter:
         Priority:
           1. If 2+ images AND query mentions SAR/radar → Fusion Adapter
           2. If 2+ images AND query mentions change/temporal → ChangeChat
-          3. Otherwise → GeoChat (single-image VQA, grounding, captioning)
+          3. Otherwise → Remote VLM (single-image VQA, grounding, captioning)
         """
         query_lower = query.lower()
         num_images = len(image_paths)
@@ -189,9 +189,6 @@ class QueryRouter:
             self._remote_vlm = None
         return self._remote_vlm
 
-    # Alias for backward compatibility
-    _get_geochat = _get_remote_vlm
-
     def _get_changechat(self) -> Any:
         """Load ChangeChat model (RemoteSensingVLM with CDVQA adapter) lazily."""
         if self._changechat_model is not None:
@@ -260,6 +257,7 @@ class QueryRouter:
             if isinstance(confidence, (int, float)):
                 effective_confidence = float(confidence)
 
+            vlm_success = result.get("success", False)
             model_trace = {
                 "model": metadata.get("base_model", "Qwen/Qwen2-VL-2B-Instruct"),
                 "adapter": metadata.get("adapter_bucket", ""),
@@ -268,8 +266,11 @@ class QueryRouter:
                 "adapter_source": metadata.get("adapter_source"),
                 "confidence_type": metadata.get("confidence_type"),
                 "execution_time_ms": metadata.get("execution_time_ms", round(elapsed, 1)),
-                "success": result.get("success", False),
+                "success": vlm_success,
             }
+            # Propagate VLM errors so controller marks failure correctly
+            if not vlm_success:
+                model_trace["error"] = metadata.get("error") or "remote_vlm_failed"
 
             return SpecialistOutput(
                 specialist="remote_vlm", sub_task=decision.sub_task,
@@ -292,77 +293,168 @@ class QueryRouter:
                 remote_metadata={"error": str(exc)},
             )
 
-    # Alias for backward compatibility
-    _execute_geochat = _execute_remote_vlm
-
     def _execute_changechat(self, decision: RouteDecision) -> SpecialistOutput:
-        """Execute ChangeChat specialist: bi-temporal change VQA."""
+        """Execute ChangeChat specialist: bi-temporal change VQA via real pipeline."""
         start = time.time()
-        model = self._get_changechat()
 
-        if model is False or model is None or len(decision.image_paths) < 2:
+        if len(decision.image_paths) < 2:
             return SpecialistOutput(
                 specialist="changechat", sub_task="change_vqa",
                 answer="",
                 bounding_boxes=[], labels=[], confidence=None,
-                model_trace={"error": "model_not_loaded" if (model is False or model is None) else "insufficient_images"}, execution_time_ms=0.0,
+                model_trace={"error": "insufficient_images"}, execution_time_ms=0.0,
             )
 
         try:
-            answer = model.describe_change(
-                decision.image_paths[0], decision.image_paths[1],
-                question=decision.query,
+            from satquery_ai.models.bitemporal_change_service import analyze_bitemporal
+            from satquery_ai.tools.bitemporal_change import BiTemporalChangeTool
+
+            # Run the real bi-temporal change pipeline (difference + connected components)
+            change_result = analyze_bitemporal(
+                decision.image_paths[0],
+                decision.image_paths[1],
             )
+
+            # Also run the tool for visual overlay and bounding boxes
+            tool = BiTemporalChangeTool()
+            tool_result = tool.execute(
+                query=decision.query,
+                images=decision.image_paths[:2],
+            )
+
             elapsed = (time.time() - start) * 1000
+
+            # Build answer from both pipeline and tool
+            answer = tool_result.get("answer", change_result.get("analysis", ""))
+
+            # Get bounding boxes and overlay from tool
+            bounding_boxes = tool_result.get("bounding_boxes", [])
+            labels = tool_result.get("labels", [])
+            overlay_path = tool_result.get("overlay_image_path", "")
+
+            # Get change metrics
+            change_ratio = tool_result.get("change_ratio", change_result.get("change_ratio", 0.0))
+            change_type = tool_result.get("change_type", change_result.get("change_type", "unknown"))
+
+            model_trace = {
+                "model": "BiTemporalChangePipeline",
+                "method": "difference_thresholding_morphological_connected_components",
+                "change_ratio": round(change_ratio, 4),
+                "change_type": change_type,
+                "changed_pixels": tool_result.get("changed_pixels"),
+                "total_pixels": tool_result.get("total_pixels"),
+                "detected_regions": len(bounding_boxes),
+                "overlay_image_path": overlay_path,
+            }
+
             return SpecialistOutput(
                 specialist="changechat", sub_task="change_vqa",
-                answer=answer, bounding_boxes=[], labels=["change"],
-                confidence=None,
-                model_trace={"model": "RemoteSensingVLM", "adapter": "cdvqa"},
-                execution_time_ms=elapsed,
+                answer=answer,
+                bounding_boxes=bounding_boxes,
+                labels=labels,
+                confidence=None,  # rule-based pipeline has no calibrated confidence
+                model_trace=model_trace,
+                execution_time_ms=round(elapsed, 1),
+                raw_response=tool_result,
             )
         except Exception as exc:
             elapsed = (time.time() - start) * 1000
+            logger.error(f"ChangeChat execution failed: {exc}")
             return SpecialistOutput(
                 specialist="changechat", sub_task="change_vqa",
                 answer="",
                 bounding_boxes=[], labels=[], confidence=None,
-                model_trace={"error": str(exc)}, execution_time_ms=elapsed,
+                model_trace={"error": str(exc)}, execution_time_ms=round(elapsed, 1),
             )
 
     def _execute_fusion_adapter(self, decision: RouteDecision) -> SpecialistOutput:
-        """Execute Fusion Adapter: SAR + Optical cross-modal analysis."""
+        """Execute Fusion Adapter: SAR + Optical cross-modal analysis via real PyTorch model + tool."""
         start = time.time()
-        model = self._get_fusion_adapter()
 
-        if model is False or model is None or len(decision.image_paths) < 2:
+        if len(decision.image_paths) < 2:
             return SpecialistOutput(
                 specialist="fusion_adapter", sub_task="joint_reasoning",
                 answer="",
                 bounding_boxes=[], labels=[], confidence=None,
-                model_trace={"error": "model_not_loaded" if (model is False or model is None) else "insufficient_images"}, execution_time_ms=0.0,
+                model_trace={"error": "insufficient_images"}, execution_time_ms=0.0,
             )
 
         try:
-            answer = model.describe_change(
-                decision.image_paths[0], decision.image_paths[1],
-                question=decision.query,
+            from satquery_ai.models.sar_optical_fusion import analyze_sar_optical
+            from satquery_ai.tools.optical_sar_joint import OpticalSARJointTool
+
+            p0 = decision.image_paths[0]
+            p1 = decision.image_paths[1]
+
+            # Detect SAR vs Optical path ordering
+            if any(k in p1.lower() for k in ["sar", "s1", "radar"]) and not any(k in p0.lower() for k in ["sar", "s1", "radar"]):
+                sar_path, optical_path = p1, p0
+            elif any(k in p0.lower() for k in ["sar", "s1", "radar"]) and not any(k in p1.lower() for k in ["sar", "s1", "radar"]):
+                sar_path, optical_path = p0, p1
+            else:
+                # Default convention: optical first, sar second
+                optical_path, sar_path = p0, p1
+
+            # Run real PyTorch SAROpticalFusion adapter inference
+            fusion_result = analyze_sar_optical(sar_path=sar_path, optical_path=optical_path)
+
+            # Run OpticalSARJointTool for visual overlay, cloud detection, SAR backscatter
+            tool = OpticalSARJointTool()
+            tool_result = tool.execute(
+                query=decision.query,
+                images=[optical_path, sar_path],
             )
+
             elapsed = (time.time() - start) * 1000
+
+            # Answer synthesis: combine tool analysis and fusion classification
+            answer = tool_result.get("answer", "")
+            predicted_classes = fusion_result.get("predicted_classes", [])
+            if predicted_classes:
+                top_preds_str = ", ".join([f"{c['label']} ({c['probability']*100:.1f}%)" for c in predicted_classes[:3]])
+                answer += f"\n\n**SEN12MS Land-Cover Classification (Fusion Adapter):**\nTop predictions: {top_preds_str}"
+
+            bounding_boxes = tool_result.get("bounding_boxes", [])
+            labels = tool_result.get("labels", [])
+            overlay_path = tool_result.get("overlay_image_path", "")
+
+            confidence = None
+            if predicted_classes and len(predicted_classes) > 0:
+                confidence = float(predicted_classes[0].get("probability", 0.0))
+
+            model_trace = {
+                "model": "SAROpticalFusion",
+                "adapter": "sen12ms_fusion",
+                "adapter_weights": fusion_result.get("checkpoint_path"),
+                "checkpoint_loaded": fusion_result.get("checkpoint_loaded", False),
+                "adapter_params": fusion_result.get("adapter_params", 166675),
+                "frozen_components": fusion_result.get("frozen_components", ["FrozenSAREncoder", "FrozenOpticalEncoder"]),
+                "predicted_classes": predicted_classes,
+                "sar_urban_cover": tool_result.get("sar_urban_cover"),
+                "optical_cloud_cover": tool_result.get("optical_cloud_cover"),
+                "sar_contrast": tool_result.get("sar_contrast"),
+                "detected_features": len(bounding_boxes),
+                "overlay_image_path": overlay_path,
+            }
+
             return SpecialistOutput(
                 specialist="fusion_adapter", sub_task="joint_reasoning",
-                answer=answer, bounding_boxes=[], labels=["sar_optical"],
-                confidence=None,
-                model_trace={"model": "RemoteSensingVLM", "adapter": "sen12ms_sar_optical"},
-                execution_time_ms=elapsed,
+                answer=answer,
+                bounding_boxes=bounding_boxes,
+                labels=labels,
+                confidence=confidence,
+                model_trace=model_trace,
+                execution_time_ms=round(elapsed, 1),
+                raw_response={**fusion_result, **tool_result},
             )
         except Exception as exc:
             elapsed = (time.time() - start) * 1000
+            logger.error(f"Fusion Adapter execution failed: {exc}")
             return SpecialistOutput(
                 specialist="fusion_adapter", sub_task="joint_reasoning",
                 answer="",
                 bounding_boxes=[], labels=[], confidence=None,
-                model_trace={"error": str(exc)}, execution_time_ms=elapsed,
+                model_trace={"error": str(exc)}, execution_time_ms=round(elapsed, 1),
             )
 
     # ──────────────────────────────────────────────────────────
@@ -443,6 +535,9 @@ class QueryRouter:
             "lora_verified": output.model_trace.get("lora_verified"),
             "adapter_source": output.model_trace.get("adapter_source"),
             "confidence_type": output.model_trace.get("confidence_type"),
+            "overlay_image_path": output.model_trace.get("overlay_image_path"),
+            "change_map_path": output.model_trace.get("change_map_path"),
+            "predicted_classes": output.model_trace.get("predicted_classes"),
         }
         # Prune None values so the trace stays clean
         model_trace = {k: v for k, v in model_trace.items() if v is not None}

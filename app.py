@@ -2,6 +2,12 @@ import os
 import re
 from typing import Any, Dict, Optional
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 import streamlit as st
 from PIL import Image
 
@@ -897,12 +903,33 @@ if isinstance(results, dict):
         unsafe_allow_html=True,
     )
 
-    if results.get("error") or results.get("success") is False:
-        err_msg = results.get('error') or "An unknown error occurred during inference."
+    # Check for hidden VLM errors that weren't propagated as top-level "error"
+    vlm_metadata = results.get("remote_vlm_metadata") or {}
+    vlm_error_hidden = vlm_metadata.get("error") if isinstance(vlm_metadata, dict) else None
+
+    if results.get("error") or results.get("success") is False or vlm_error_hidden:
+        if vlm_error_hidden and not results.get("error"):
+            # VLM failed but controller didn't surface it as top-level error
+            err_msg = vlm_error_hidden
+        else:
+            err_msg = results.get('error') or vlm_error_hidden or "An unknown error occurred during inference."
         st.error(
             "SatQuery could not complete this request. "
             f"{err_msg}"
         )
+
+        # Show actionable diagnostics if it looks like auth/quota issue
+        lower_err = err_msg.lower()
+        if "zerogpu" in lower_err or "quota" in lower_err or "token" in lower_err or "auth" in lower_err:
+            st.info(
+                "**Quick checks to restore VLM service:**\n\n"
+                "1. Ensure `HF_TOKEN` is set in your Streamlit Cloud app secrets\n"
+                "   (create a token at https://huggingface.co/settings/tokens with **Write** scope).\n"
+                "2. Confirm the token has **Write** scope (required for ZeroGPU).\n"
+                "3. Restart your Streamlit app after updating the secret.\n"
+                "4. Free quota is ~5 min/day; monitor usage on the Space page.\n"
+                "5. If quota is exhausted, wait until the next day or switch to a paid GPU Space."
+            )
     else:
         answer = (
             results.get("answer")
