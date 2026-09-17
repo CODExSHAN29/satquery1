@@ -1,0 +1,250 @@
+{
+  "tool": "SingleImageVQATool (OpenCV spectral heuristic)",
+  "protocol": "RSVQA-style keyword + containment accuracy",
+  "total_samples": 20,
+  "total_correct": 20,
+  "overall_accuracy": 1.0,
+  "mean_latency_ms": 17.4,
+  "category_breakdown": {
+    "land-cover": {
+      "accuracy": 1.0,
+      "correct": 6,
+      "total": 6,
+      "mean_latency_ms": 13.4
+    },
+    "presence": {
+      "accuracy": 1.0,
+      "correct": 6,
+      "total": 6,
+      "mean_latency_ms": 25.1
+    },
+    "statistics": {
+      "accuracy": 1.0,
+      "correct": 8,
+      "total": 8,
+      "mean_latency_ms": 14.7
+    }
+  },
+  "samples": [
+    {
+      "sample_id": "VQA_P_001",
+      "category": "presence",
+      "scene_type": "water",
+      "question": "Is there any water body or coastal area visible in this satellite image?",
+      "gt_answer": "yes",
+      "pred_answer": "**Question:** Is there any water body or coastal area visible in this satellite image?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 97.9% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 2.1% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 0.0%\n- **Atmospheric Cloud Cover:** 0.0%\n- **Barren / Open Soil:** 0.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Water/Coastal** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 85.1
+    },
+    {
+      "sample_id": "VQA_P_002",
+      "category": "presence",
+      "scene_type": "vegetation",
+      "question": "Is there vegetation or forest cover present in this satellite patch?",
+      "gt_answer": "yes",
+      "pred_answer": "**Question:** Is there vegetation or forest cover present in this satellite patch?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 100.0% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 0.0%\n- **Atmospheric Cloud Cover:** 0.0%\n- **Barren / Open Soil:** 0.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Vegetation** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 15.6
+    },
+    {
+      "sample_id": "VQA_P_003",
+      "category": "presence",
+      "scene_type": "urban",
+      "question": "Are there any urban or built-up areas visible in this image?",
+      "gt_answer": "yes",
+      "pred_answer": "**Question:** Are there any urban or built-up areas visible in this image?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 0.1% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 73.6%\n- **Atmospheric Cloud Cover:** 23.2%\n- **Barren / Open Soil:** 3.1%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Urban** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 12.0
+    },
+    {
+      "sample_id": "VQA_P_004",
+      "category": "presence",
+      "scene_type": "cloud",
+      "question": "Is this satellite image obscured by cloud cover?",
+      "gt_answer": "yes",
+      "pred_answer": "**Question:** Is this satellite image obscured by cloud cover?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 0.0% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 0.0%\n- **Atmospheric Cloud Cover:** 100.0%\n- **Barren / Open Soil:** 0.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Water/Coastal** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 12.1
+    },
+    {
+      "sample_id": "VQA_P_005",
+      "category": "presence",
+      "scene_type": "water",
+      "question": "Is there a significant water body in this satellite scene?",
+      "gt_answer": "yes",
+      "pred_answer": "**Question:** Is there a significant water body in this satellite scene?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 97.9% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 2.1% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 0.0%\n- **Atmospheric Cloud Cover:** 0.0%\n- **Barren / Open Soil:** 0.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Water/Coastal** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 11.9
+    },
+    {
+      "sample_id": "VQA_P_006",
+      "category": "presence",
+      "scene_type": "vegetation",
+      "question": "Does this aerial view show any green vegetation?",
+      "gt_answer": "yes",
+      "pred_answer": "**Question:** Does this aerial view show any green vegetation?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 100.0% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 0.0%\n- **Atmospheric Cloud Cover:** 0.0%\n- **Barren / Open Soil:** 0.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Vegetation** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 14.1
+    },
+    {
+      "sample_id": "VQA_L_001",
+      "category": "land-cover",
+      "scene_type": "water",
+      "question": "What type of land cover dominates this satellite image?",
+      "gt_answer": "water",
+      "pred_answer": "**Question:** What type of land cover dominates this satellite image?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 97.9% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 2.1% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 0.0%\n- **Atmospheric Cloud Cover:** 0.0%\n- **Barren / Open Soil:** 0.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Water/Coastal** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 14.8
+    },
+    {
+      "sample_id": "VQA_L_002",
+      "category": "land-cover",
+      "scene_type": "vegetation",
+      "question": "Describe the primary land cover visible in this satellite patch.",
+      "gt_answer": "vegetation",
+      "pred_answer": "**Question:** Describe the primary land cover visible in this satellite patch.\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 100.0% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 0.0%\n- **Atmospheric Cloud Cover:** 0.0%\n- **Barren / Open Soil:** 0.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Vegetation** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 9.7
+    },
+    {
+      "sample_id": "VQA_L_003",
+      "category": "land-cover",
+      "scene_type": "urban",
+      "question": "What is the primary land use class observed in this image?",
+      "gt_answer": "urban",
+      "pred_answer": "**Question:** What is the primary land use class observed in this image?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 0.1% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 73.5%\n- **Atmospheric Cloud Cover:** 23.1%\n- **Barren / Open Soil:** 3.3%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Urban** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 12.4
+    },
+    {
+      "sample_id": "VQA_L_004",
+      "category": "land-cover",
+      "scene_type": "mixed",
+      "question": "What land cover types are present in this satellite view?",
+      "gt_answer": "vegetation and urban",
+      "pred_answer": "**Question:** What land cover types are present in this satellite view?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 50.0% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 45.1%\n- **Atmospheric Cloud Cover:** 3.9%\n- **Barren / Open Soil:** 1.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Vegetation** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 14.0
+    },
+    {
+      "sample_id": "VQA_L_005",
+      "category": "land-cover",
+      "scene_type": "cloud",
+      "question": "How much cloud cover is present in this satellite image?",
+      "gt_answer": "high cloud cover",
+      "pred_answer": "**Question:** How much cloud cover is present in this satellite image?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 0.0% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 0.0%\n- **Atmospheric Cloud Cover:** 100.0%\n- **Barren / Open Soil:** 0.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Water/Coastal** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 12.7
+    },
+    {
+      "sample_id": "VQA_L_006",
+      "category": "land-cover",
+      "scene_type": "water",
+      "question": "What geographic feature is most prominently visible?",
+      "gt_answer": "water body",
+      "pred_answer": "**Question:** What geographic feature is most prominently visible?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 97.9% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 2.1% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 0.0%\n- **Atmospheric Cloud Cover:** 0.0%\n- **Barren / Open Soil:** 0.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Water/Coastal** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 17.0
+    },
+    {
+      "sample_id": "VQA_C_001",
+      "category": "statistics",
+      "scene_type": "urban",
+      "question": "What percentage of this image shows urban or built-up land?",
+      "gt_answer": "majority urban",
+      "pred_answer": "**Question:** What percentage of this image shows urban or built-up land?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 0.1% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 73.8%\n- **Atmospheric Cloud Cover:** 23.0%\n- **Barren / Open Soil:** 3.1%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Urban** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 20.9
+    },
+    {
+      "sample_id": "VQA_C_002",
+      "category": "statistics",
+      "scene_type": "vegetation",
+      "question": "Approximately what percentage of this patch is covered by vegetation?",
+      "gt_answer": "majority vegetation",
+      "pred_answer": "**Question:** Approximately what percentage of this patch is covered by vegetation?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 100.0% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 0.0%\n- **Atmospheric Cloud Cover:** 0.0%\n- **Barren / Open Soil:** 0.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Vegetation** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 23.6
+    },
+    {
+      "sample_id": "VQA_C_003",
+      "category": "statistics",
+      "scene_type": "water",
+      "question": "What fraction of this coastal satellite image is water?",
+      "gt_answer": "significant water area",
+      "pred_answer": "**Question:** What fraction of this coastal satellite image is water?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 97.9% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 2.1% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 0.0%\n- **Atmospheric Cloud Cover:** 0.0%\n- **Barren / Open Soil:** 0.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Water/Coastal** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 12.5
+    },
+    {
+      "sample_id": "VQA_C_004",
+      "category": "statistics",
+      "scene_type": "mixed",
+      "question": "What is the land use breakdown in this mixed urban-vegetation scene?",
+      "gt_answer": "mix of vegetation and urban",
+      "pred_answer": "**Question:** What is the land use breakdown in this mixed urban-vegetation scene?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 50.0% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 45.0%\n- **Atmospheric Cloud Cover:** 4.0%\n- **Barren / Open Soil:** 1.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Vegetation** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 11.8
+    },
+    {
+      "sample_id": "VQA_C_005",
+      "category": "statistics",
+      "scene_type": "urban",
+      "question": "At 10m resolution, what is the dominant surface type in pixels?",
+      "gt_answer": "urban or built-up area",
+      "pred_answer": "**Question:** At 10m resolution, what is the dominant surface type in pixels?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 0.1% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 73.5%\n- **Atmospheric Cloud Cover:** 23.1%\n- **Barren / Open Soil:** 3.3%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Urban** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 14.9
+    },
+    {
+      "sample_id": "VQA_C_006",
+      "category": "statistics",
+      "scene_type": "vegetation",
+      "question": "Estimate the green vegetation coverage percentage in this patch.",
+      "gt_answer": "high vegetation coverage",
+      "pred_answer": "**Question:** Estimate the green vegetation coverage percentage in this patch.\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 100.0% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 0.0%\n- **Atmospheric Cloud Cover:** 0.0%\n- **Barren / Open Soil:** 0.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Vegetation** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 10.1
+    },
+    {
+      "sample_id": "VQA_C_007",
+      "category": "statistics",
+      "scene_type": "mixed",
+      "question": "Does this image show more vegetation or more urban area?",
+      "gt_answer": "similar proportions of vegetation and urban",
+      "pred_answer": "**Question:** Does this image show more vegetation or more urban area?\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 0.0% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 50.0% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 45.1%\n- **Atmospheric Cloud Cover:** 3.9%\n- **Barren / Open Soil:** 1.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Vegetation** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 10.4
+    },
+    {
+      "sample_id": "VQA_C_008",
+      "category": "statistics",
+      "scene_type": "water",
+      "question": "Describe the ratio of land to water in this satellite view.",
+      "gt_answer": "predominantly water",
+      "pred_answer": "**Question:** Describe the ratio of land to water in this satellite view.\n\n**Visual Scene Analysis (RGB only \u2014 no NIR/SWIR bands):**\n- **Water / Coastal Cover:** 97.9% (RGB brightness heuristic, not NDWI)\n- **Vegetation & Forest Cover:** 2.1% (RGB greenness heuristic, not NDVI)\n- **Urban / Built-up Area:** 0.0%\n- **Atmospheric Cloud Cover:** 0.0%\n- **Barren / Open Soil:** 0.0%\n\n**Spectral Index Note:** Required NIR/SWIR band unavailable. True NDVI/NDWI/MNDWI require NIR/SWIR bands and are not computed here.\n\n**Key Findings:** The satellite scene primarily consists of **Water/Coastal** covering 256x256 pixels at 10m spatial resolution.",
+      "correct": true,
+      "confidence": null,
+      "latency_ms": 13.1
+    }
+  ]
+}

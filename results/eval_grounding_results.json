@@ -1,0 +1,415 @@
+{
+  "tool": "TextGroundingTool (architecture-compliant, no OpenCV fallback)",
+  "protocol": "VRSBench-style bounding box IoU @ threshold 0.5",
+  "iou_threshold": 0.5,
+  "total_samples": 15,
+  "total_gt_boxes": 18,
+  "no_model_samples": 15,
+  "tp": 0,
+  "fp": 0,
+  "fn": 18,
+  "precision": 0.0,
+  "recall": 0.0,
+  "f1_score": 0.0,
+  "localization_accuracy": 0.0,
+  "mean_latency_ms": 0.0,
+  "note": "All samples returned 0 predicted boxes: TextGroundingTool is architecture-compliant and does not fabricate detections. Connect a remote ZeroGPU GeoChat/GroundingDINO adapter to produce real spatial outputs for production IoU evaluation.",
+  "samples": [
+    {
+      "sample_id": "GND_001",
+      "query": "Locate the river in this satellite image.",
+      "gt_boxes": [
+        [
+          100,
+          50,
+          200,
+          460
+        ]
+      ],
+      "gt_labels": [
+        "river"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_002",
+      "query": "Find the runway in this aerial view.",
+      "gt_boxes": [
+        [
+          200,
+          120,
+          280,
+          400
+        ]
+      ],
+      "gt_labels": [
+        "runway"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_003",
+      "query": "Highlight all buildings in this satellite patch.",
+      "gt_boxes": [
+        [
+          60,
+          60,
+          140,
+          130
+        ],
+        [
+          200,
+          200,
+          280,
+          280
+        ],
+        [
+          350,
+          100,
+          420,
+          180
+        ]
+      ],
+      "gt_labels": [
+        "building",
+        "building",
+        "building"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 3,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_004",
+      "query": "Where is the port facility in this harbor image?",
+      "gt_boxes": [
+        [
+          50,
+          80,
+          300,
+          350
+        ]
+      ],
+      "gt_labels": [
+        "port_facility"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_005",
+      "query": "Detect vehicles in this satellite scene.",
+      "gt_boxes": [
+        [
+          400,
+          100,
+          430,
+          130
+        ],
+        [
+          400,
+          200,
+          430,
+          230
+        ]
+      ],
+      "gt_labels": [
+        "vehicle",
+        "vehicle"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 2,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_006",
+      "query": "Ground the road network in this image.",
+      "gt_boxes": [
+        [
+          0,
+          240,
+          512,
+          280
+        ]
+      ],
+      "gt_labels": [
+        "road"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_007",
+      "query": "Pinpoint the stadium in this overhead view.",
+      "gt_boxes": [
+        [
+          150,
+          150,
+          360,
+          360
+        ]
+      ],
+      "gt_labels": [
+        "stadium"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_008",
+      "query": "Locate airport terminals and infrastructure.",
+      "gt_boxes": [
+        [
+          80,
+          60,
+          200,
+          450
+        ]
+      ],
+      "gt_labels": [
+        "airport_terminal"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_009",
+      "query": "Find the solar farm in this satellite image.",
+      "gt_boxes": [
+        [
+          300,
+          300,
+          490,
+          490
+        ]
+      ],
+      "gt_labels": [
+        "solar_farm"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_010",
+      "query": "Identify the industrial area in this scene.",
+      "gt_boxes": [
+        [
+          20,
+          350,
+          280,
+          510
+        ]
+      ],
+      "gt_labels": [
+        "industrial_area"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_011",
+      "query": "Where is the water reservoir in this aerial view?",
+      "gt_boxes": [
+        [
+          200,
+          50,
+          400,
+          250
+        ]
+      ],
+      "gt_labels": [
+        "reservoir"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_012",
+      "query": "Locate the bridge visible in this satellite patch.",
+      "gt_boxes": [
+        [
+          240,
+          100,
+          280,
+          410
+        ]
+      ],
+      "gt_labels": [
+        "bridge"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_013",
+      "query": "Detect the construction site in this before/after image.",
+      "gt_boxes": [
+        [
+          100,
+          100,
+          300,
+          300
+        ]
+      ],
+      "gt_labels": [
+        "construction_site"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_014",
+      "query": "Find the parking lot in this urban satellite view.",
+      "gt_boxes": [
+        [
+          350,
+          50,
+          490,
+          180
+        ]
+      ],
+      "gt_labels": [
+        "parking_lot"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    },
+    {
+      "sample_id": "GND_015",
+      "query": "Locate the hospital complex in this overhead image.",
+      "gt_boxes": [
+        [
+          100,
+          250,
+          380,
+          490
+        ]
+      ],
+      "gt_labels": [
+        "hospital"
+      ],
+      "pred_boxes": [],
+      "pred_labels": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "localized": false,
+      "best_iou": 0.0,
+      "confidence": 0.0,
+      "latency_ms": 0.0,
+      "tool_status": "no_model_loaded"
+    }
+  ]
+}

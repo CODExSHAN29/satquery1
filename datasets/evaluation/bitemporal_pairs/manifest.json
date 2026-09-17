@@ -1,0 +1,68 @@
+[
+  {
+    "pair_id": "test_2_0000_0000",
+    "size": [
+      256,
+      256
+    ],
+    "change_pct": 25.18,
+    "t1_path": "datasets/evaluation/bitemporal_pairs\\test_2_0000_0000\\t1_before.png",
+    "t2_path": "datasets/evaluation/bitemporal_pairs\\test_2_0000_0000\\t2_after.png",
+    "gt_path": "datasets/evaluation/bitemporal_pairs\\test_2_0000_0000\\ground_truth_mask.png"
+  },
+  {
+    "pair_id": "test_2_0000_0512",
+    "size": [
+      256,
+      256
+    ],
+    "change_pct": 18.31,
+    "t1_path": "datasets/evaluation/bitemporal_pairs\\test_2_0000_0512\\t1_before.png",
+    "t2_path": "datasets/evaluation/bitemporal_pairs\\test_2_0000_0512\\t2_after.png",
+    "gt_path": "datasets/evaluation/bitemporal_pairs\\test_2_0000_0512\\ground_truth_mask.png"
+  },
+  {
+    "pair_id": "test_55_0256_0000",
+    "size": [
+      256,
+      256
+    ],
+    "change_pct": 13.19,
+    "t1_path": "datasets/evaluation/bitemporal_pairs\\test_55_0256_0000\\t1_before.png",
+    "t2_path": "datasets/evaluation/bitemporal_pairs\\test_55_0256_0000\\t2_after.png",
+    "gt_path": "datasets/evaluation/bitemporal_pairs\\test_55_0256_0000\\ground_truth_mask.png"
+  },
+  {
+    "pair_id": "test_77_0512_0256",
+    "size": [
+      256,
+      256
+    ],
+    "change_pct": 17.55,
+    "t1_path": "datasets/evaluation/bitemporal_pairs\\test_77_0512_0256\\t1_before.png",
+    "t2_path": "datasets/evaluation/bitemporal_pairs\\test_77_0512_0256\\t2_after.png",
+    "gt_path": "datasets/evaluation/bitemporal_pairs\\test_77_0512_0256\\ground_truth_mask.png"
+  },
+  {
+    "pair_id": "test_102_0512_0000",
+    "size": [
+      256,
+      256
+    ],
+    "change_pct": 20.68,
+    "t1_path": "datasets/evaluation/bitemporal_pairs\\test_102_0512_0000\\t1_before.png",
+    "t2_path": "datasets/evaluation/bitemporal_pairs\\test_102_0512_0000\\t2_after.png",
+    "gt_path": "datasets/evaluation/bitemporal_pairs\\test_102_0512_0000\\ground_truth_mask.png"
+  },
+  {
+    "pair_id": "test_121_0768_0256",
+    "size": [
+      256,
+      256
+    ],
+    "change_pct": 19.58,
+    "t1_path": "datasets/evaluation/bitemporal_pairs\\test_121_0768_0256\\t1_before.png",
+    "t2_path": "datasets/evaluation/bitemporal_pairs\\test_121_0768_0256\\t2_after.png",
+    "gt_path": "datasets/evaluation/bitemporal_pairs\\test_121_0768_0256\\ground_truth_mask.png"
+  }
+]
